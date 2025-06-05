@@ -1,7 +1,6 @@
-package CodeSummary2
+package CodeSummary
 
 import (
-	"MyTools/CodeSummary"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -25,17 +24,8 @@ type Config struct {
 var generalConfig Config
 var exp *regexp.Regexp
 var expEnd *regexp.Regexp
-var parser CodeSummary.Parser
-var matcher CodeSummary.Matcher
-var textProcessor *CodeSummary.TextProcessor
+var textProcessor *TextProcessor
 
-//	func (c *Config) GetFilledExpStr() string {
-//		return fmt.Sprintf(c.RegFormat, c.StartFlag)
-//	}
-//
-//	func (c *Config) GetFilledExpEndStr() string {
-//		return fmt.Sprintf(c.RegFormatEnd, c.EndFlag)
-//	}
 func (c *Config) IsValid() bool {
 	if c.RegFormat == "" || c.RegFormatEnd == "" {
 		return false
@@ -91,17 +81,7 @@ func SetDefaultConfig() {
 
 // SUM
 func ExtractFrommFile(filename string, dstFile string) {
-	parser = CodeSummary.Parser{
-		AllText:    nil,
-		IsMarkdown: false,
-		Count:      parser.Count,
-	}
-	parser.EnableMarkdown(generalConfig.IsMarkdownType)
-
-	matcher = CodeSummary.Matcher{}
-	matcher.SetRegMatch(generalConfig.StartFlag, generalConfig.EndFlag)
-
-	textProcessor = &CodeSummary.TextProcessor{}
+	textProcessor = &TextProcessor{}
 	textProcessor.Init(generalConfig.RegFormat, generalConfig.RegFormatEnd)
 	//遍历文件，查找标记语法
 	file, err := os.OpenFile(filename, os.O_RDONLY, 777)
@@ -109,66 +89,18 @@ func ExtractFrommFile(filename string, dstFile string) {
 		fmt.Println(err)
 	}
 	scanner := bufio.NewScanner(file) //SUM 把文件放入扫描器，可以一行一行地读取
-	//var matchedTexts []string
-	//var isMatchedResult bool
 
 	for scanner.Scan() {
 		txt := scanner.Text()
 		textProcessor.ReadIn(txt)
-		//找到开始符号
-
-		//result := exp.FindStringSubmatch(txt) //SUM 正则表达式找到不同的组,result第0位是匹配的全部，后面几位是分组的结果
-		//if len(result) == 3 {
-		//	//如果存在
-		//	isMatchedResult = true
-		//	parser.AppendText(txt, true, result[1], result[2])
-		//	//matcher.ReadIn(result[1], txt, result[1], result[2])
-		//	continue
-		//}
-		//
-		////找到结束符号
-		//resultEnd := expEnd.FindStringSubmatch(txt)
-		//if resultEnd != nil {
-		//	//替换结束符号为空白
-		//	txt = strings.Replace(txt, resultEnd[0], "", -1)
-		//	parser.AppendText(txt, false, "", "")
-		//	parser.Store()
-		//	isMatchedResult = false
-		//	continue
-		//}
-		//
-		////处于多行文本之间时候，添加文本
-		//if isMatchedResult {
-		//	parser.AppendText(txt, false, "", "")
-		//}
-		//if isMatchedResult {
-		//	matcher.ReadIn("", txt, "", "")
-		//}
-		//resultEnd := expEnd.FindStringSubmatch(txt)
-		//if resultEnd != nil {
-		//	//替换结束符号为空白
-		//	isMatchedResult = false
-		//}
 	}
-	//matcher.Reformat()
-	//matcher.WriteToParser(&parser)
 	str := textProcessor.GetResult()
 	fmt.Println(str)
-	//parser.ConvertToMarkdown()
-	//WriteInFile(parser.GetText(true), dstFile)
 	WriteInFile(str, dstFile)
 	file.Close()
 
 }
 func WriteInFile(data string, dstFile string) {
-	//比较大小,先替换较长的字符串,如SUMEND,再替换SUM,防止出现替换了一半的情况
-	//if len(generalConfig.EndFlag) > len(generalConfig.StartFlag) {
-	//	data = strings.Replace(data, generalConfig.EndFlag, "", -1)
-	//	data = strings.Replace(data, generalConfig.StartFlag, "", -1)
-	//} else {
-	//	data = strings.Replace(data, generalConfig.StartFlag, "", -1)
-	//	data = strings.Replace(data, generalConfig.EndFlag, "", -1)
-	//}
 	if data == "" {
 		return
 	}

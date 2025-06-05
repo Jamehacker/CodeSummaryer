@@ -103,8 +103,8 @@ func WriteInFile(data string, dstFile string) {
 func ExtractFromFolder(folderPath string, dstFile string) {
 	var files []string
 	filepath.Walk(folderPath, func(path string, info fs.FileInfo, err error) error { //SUM 遍历文件夹
-		files = append(files, path)
-		return nil
+		files = append(files, path) //SUM 列表添加元素
+		return nil                  //SUMEND
 	}) //SUMEND
 
 }

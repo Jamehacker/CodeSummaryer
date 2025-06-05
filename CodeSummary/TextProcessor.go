@@ -3,23 +3,16 @@ package CodeSummary
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
-)
-
-type SumFlags int
-
-const (
-	SumBegin SumFlags = iota
-	SumEnd
-	Other
 )
 
 type TextProcessor struct {
 	reg          *RegFormat
 	layers       map[int]*TextLayer //保存当前正在匹配的层，匹配好后对应键值移动到layers_Taken
 	layers_Taken map[int]*TextLayer //匹配好SUM-END对儿的层
-	flags        []SumFlags
+	layerCount   int                //记录层的个数
 	//result       [][]string
 }
 
@@ -32,6 +25,7 @@ func (t *TextProcessor) Init(begin string, end string) {
 	t.reg.init(begin, end)
 	t.layers = make(map[int]*TextLayer)
 	t.layers_Taken = make(map[int]*TextLayer)
+	t.layerCount = 0
 }
 
 // 读入一行数据，保存匹配内容
@@ -48,12 +42,6 @@ func (t *TextProcessor) ReadIn(lineText string) {
 	}
 
 }
-func (t *TextProcessor) getLast() SumFlags {
-	if len(t.flags) == 0 {
-		return Other
-	}
-	return t.flags[len(t.flags)-1]
-}
 func (t *TextProcessor) insertNewLayerToMap(string2 string, matchString []string) {
 	if len(matchString) != 3 {
 		fmt.Println("标记开始（reg_format）的正则表达式格式错误，无法匹配到两个需要的内容！")
@@ -66,11 +54,11 @@ func (t *TextProcessor) insertNewLayerToMap(string2 string, matchString []string
 		comment:        matchString[2],
 		flagAndComment: matchString[0],
 	}
-	len1 := len(t.layers)
-	t.layers[len1] = &TextLayer{
+	t.layers[t.layerCount] = &TextLayer{
 		matchs:     []string{string2},
 		layersInfo: layersInfo,
 	}
+	t.layerCount++
 
 }
 
@@ -80,23 +68,27 @@ func (t *TextProcessor) insertNewLayerToMap(string2 string, matchString []string
 //	@receiver t
 //	@param string2
 func (t *TextProcessor) insertTextToLayers(string2 string) {
-	len := len(t.layers)
-	for i := 0; i < len; i++ {
-		t.layers[i].AppendMatchs(string2)
+	for key, _ := range t.layers {
+		t.layers[key].AppendMatchs(string2)
 	}
 
 }
 func (t *TextProcessor) takeCurrentLayerToResult(string2 string, matchString []string) {
-	len1 := len(t.layers)
 	t.insertTextToLayers(string2)
 	//t.result = append(t.result, t.layers[len1-1].GetMatchs()) //把最后一层加到结构体处理结果中
 	if len(matchString) != 2 {
 		fmt.Println("标记开始（reg_format）的正则表达式格式错误，无法匹配到两个需要的内容！")
 		return
 	}
-	t.layers[len1-1].SetEndInfo(matchString[1])
-	t.layers_Taken[len1-1] = t.layers[len1-1]
-	delete(t.layers, len1-1)
+	var keys []int
+	for key, _ := range t.layers {
+		keys = append(keys, key)
+	}
+	sort.Ints(keys) //SUM 升序排序
+	lastKey := keys[len(keys)-1]
+	t.layers[lastKey].SetEndInfo(matchString[1])
+	t.layers_Taken[lastKey] = t.layers[lastKey]
+	delete(t.layers, lastKey)
 }
 
 // GetResult

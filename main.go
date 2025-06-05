@@ -1,7 +1,7 @@
 package main
 
 import (
-	"MyTools/CodeSummary2"
+	"MyTools/CodeSummary"
 	"flag"
 	"fmt"
 	"os"
@@ -32,9 +32,9 @@ func main() {
 	//
 	////设置配置
 	if IsExist(*configPath) {
-		CodeSummary2.SetConfig(*configPath)
+		CodeSummary.SetConfig(*configPath)
 	} else {
-		CodeSummary2.SetDefaultConfig()
+		CodeSummary.SetDefaultConfig()
 	}
 	////如果输出目录不为空，默认开始
 	*output = "1.txt"
@@ -43,16 +43,8 @@ func main() {
 		fmt.Println("使用默认的配置")
 		fmt.Println("提取开始")
 		os.Truncate(*output, 0) //SUM 把文件的大小设置为0
-		CodeSummary2.ExtractFromFolder(*rootDir, *output)
+		CodeSummary.ExtractFromFolder(*rootDir, *output)
 		fmt.Println("提取结束")
 		return
 	}
-	////如果只是创建配置文件
-	//if *createJsonPath != "" {
-	//	fmt.Println("创建配置文件")
-	//	CodeSummary.CreateJsonFormat(*createJsonPath)
-	//	return
-	//}
-	//
-	//fmt.Println("无效参数")
 }
