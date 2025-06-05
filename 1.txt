@@ -1,0 +1,14 @@
+1. 遍历文件夹: 
+```js
+filepath.Walk(folderPath, func(path string, info fs.FileInfo, err error) error { 
+files = append(files, path)
+return nil
+}) 
+```
+2. 每次写入都会清除缓存区:  `_, err = scanner.WriteString(data) `
+3. 使用Flush把缓存区内容写入文件:  `scanner.Flush() `
+4. testcode:  `package CodeSummary `
+5. 把文件放入扫描器，可以一行一行地读取:  `scanner := bufio.NewScanner(file) `
+6. 找到不同的组:  `result := exp.FindStringSubmatch(text) `
+7. 清空切片 重新分配一个切片:  `matchedTexts = []string{} `
+

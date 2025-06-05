@@ -1,0 +1,33 @@
+bytes, err := os.ReadFile(jsonFilePath) // 读取文件全部内容
+scanner := bufio.NewScanner(file) // 把文件放入扫描器，可以一行一行地读取
+result := exp.FindStringSubmatch(text) // 找到不同的组
+matchedTexts = []string{} // 清空切片 重新分配一个切片
+file, err := os.OpenFile(dstFile, os.O_CREATE|os.O_APPEND, 666) // 创建文件并且可读可写
+_, err = scanner.WriteString(data) // 每次写入都会清除缓存区
+scanner.Flush() // 使用Flush把缓存区内容写入文件
+filepath.Walk(folderPath, func(path string, info fs.FileInfo, err error) error { // 遍历文件夹
+if strings.HasPrefix(path, ".") { // 判断字符串是否以...开头
+return nil
+}
+if !info.IsDir() && path != dstFile {
+files = append(files, path)
+}
+return nil
+
+}) //END
+scanner := bufio.NewScanner(file) // 把文件放入扫描器，可以一行一行地读取
+result := exp.FindStringSubmatch(text) // 找到不同的组
+matchedTexts = []string{} // 清空切片 重新分配一个切片
+_, err = scanner.WriteString(data) // 每次写入都会清除缓存区
+scanner.Flush() // 使用Flush把缓存区内容写入文件
+filepath.Walk(folderPath, func(path string, info fs.FileInfo, err error) error { // 遍历文件夹
+files = append(files, path)
+return nil
+}) //END
+// mainTest
+//CodeSummary.SetConfig()
+//CodeSummary.CreateJsonFormat("format.json")
+CodeSummary.SetConfig("format.json")
+//CodeSummary.ExtractFrommFile("Tests/Summary.go", "Tests/Summary.txt")
+CodeSummary.ExtractFromFolder(".", "Tests/Summary.txt")
+//END
