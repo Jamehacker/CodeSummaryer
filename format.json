@@ -1,1 +1,0 @@
-{"start_flag":"SUM1","end_flag":"SUMEND","reg_format":"(//\\s*%s\\s+)(.+)","reg_format_end":"(//\\s*%s)"}

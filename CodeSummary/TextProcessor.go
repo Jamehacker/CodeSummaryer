@@ -74,6 +74,11 @@ func (t *TextProcessor) insertTextToLayers(string2 string) {
 
 }
 func (t *TextProcessor) takeCurrentLayerToResult(string2 string, matchString []string) {
+	if len(t.layers) == 0 {
+		fmt.Println("====Error 无法匹配的终止符号：'" + matchString[1] + "'=========")
+		return
+	}
+
 	t.insertTextToLayers(string2)
 	//t.result = append(t.result, t.layers[len1-1].GetMatchs()) //把最后一层加到结构体处理结果中
 	if len(matchString) != 2 {
