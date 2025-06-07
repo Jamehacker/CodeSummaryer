@@ -40,3 +40,9 @@ filepath.Walk(folderPath, func(path string, info fs.FileInfo, err error) error {
 ## 手动编译（Compile）
 1. `go build -o Summary.exe main.go`
 2. 将`Summary.exe`放到系统环境命令下（你可以选择其他名字，这需要在`1.`中修改`-o`的参数）。
+
+## 修改配置（Compile）
+1. 使用`-c`命令创建默认配置。
+2. 修改配置文件中`//SUM`和`//SUMEND`为你想要的标记符如`//BEGIN`和`//END`。
+3. 使用修改后的标记符标记代码段。 
+4. 使用Summary进行代码总结时使用`-j`指定你修改后的配置文件
